@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"package": "deigojojlo.chatutil.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"ChatFilter.java",
+		"TitleCapture.java"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

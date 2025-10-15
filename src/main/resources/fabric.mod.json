@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "Tracker",
+	"version": "0.1",
+	"name": "Tracker",
+	"description": "I tack your stats on play.oneblock.fr",
+	"authors": [
+		"deigojojlo"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/chatutil/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"deigojojlo.chatutil.ChatUtil"
+		]
+	},
+	"mixins": [
+		"chatutil.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.0",
+		"minecraft": "~1.21.4",
+		"fabric-api": "*"
+	}
+}
