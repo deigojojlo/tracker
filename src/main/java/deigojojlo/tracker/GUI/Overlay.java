@@ -52,7 +52,7 @@ public class Overlay {
         y += 12;
         drawContext.drawText(mcCli.textRenderer, Text.literal("Money of the month : " + Minion.getMonth() + "§f实"), titleX, y, 0xFFFFFF, true);
         y += 12;
-        drawContext.drawText(mcCli.textRenderer, Text.literal("Level of the month : " + Island.getMonth() + " levels"), titleX, y, 0xFFFFFF, true);
+        drawContext.drawText(mcCli.textRenderer, Text.literal("Level of the month : " + Island.getLastMonth() + " levels"), titleX, y, 0xFFFFFF, true);
         y += 12;
         drawContext.drawText(mcCli.textRenderer, Text.literal("Money of the day : " + Minion.getMoney() + "§f实"), titleX, y, 0xFFFFFF, true);
         y += 12;

@@ -5,38 +5,38 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.ibm.icu.impl.Pair;
 
+import deigojojlo.tracker.DataAnalist.SubType.InslandEntry;
 import net.fabricmc.loader.api.FabricLoader;
 
-public class Island {
+public class Island implements Statistics{
     private static int level = 0;
     private static Integer time = null;
-    private static Level dayLevel;
-    private static List<Level> data ;
+    private static InslandEntry dayLevel;
+    private static List<InslandEntry> data ;
     private static int allTimeLevel = 0;
     private static int monthlyTimeLevel = 0;
+
     {
         Gson gson = new Gson();
-        String path = FabricLoader.getInstance().getGameDir().toString() + "chatUtil/island.json";
+        String path = FabricLoader.getInstance().getGameDir().toString() + "/tracker/island.json";
 
         try (FileReader reader = new FileReader(path)){
-            Type itemListType = new TypeToken<List<Level>>(){}.getType(); // the type of the list
+            Type itemListType = new TypeToken<List<InslandEntry>>(){}.getType(); // the type of the list
             data = gson.fromJson(reader, itemListType ); // items
             
-            Level lastDay =  data.getLast();
+            InslandEntry lastDay =  data.getLast();
             LocalDate date = LocalDate.now();
 
             if (lastDay.getDate().equals(date.toString())){
                 dayLevel = lastDay ;
             } else {
-                dayLevel = new Level(date.toString(),0);
+                dayLevel = new InslandEntry(date.toString(),0);
                 data.addLast(dayLevel);
             }
         } catch (IOException error){
@@ -58,7 +58,7 @@ public class Island {
 
     public static void save(){
         Gson gson = new Gson();
-        String path = FabricLoader.getInstance().getGameDir().toString() + "chatUtil/island.json";
+        String path = FabricLoader.getInstance().getGameDir().toString() + "/tracker/island.json";
 
         try (FileWriter writer = new FileWriter(path)){
             writer.write(gson.toJson(data));
@@ -75,32 +75,9 @@ public class Island {
         return allTimeLevel;
     }
 
-    public static int getMonth(){
+    public static int getLastMonth(){
         return monthlyTimeLevel;
     }
 
-    private class Level {
-        String date;
-        int count;
-
-        private Level(String date, int count){
-            this.date = date;
-            this.count = count;
-        }
-        private String getDate(){
-            return this.date;
-        }
-
-        private int getCount(){
-            return this.count;
-        }
-
-        private void setDate(String date){
-            this.date = date;
-        }
-
-        private void setCount(int count){
-            this.count = count;
-        }
-    }
+    
 }

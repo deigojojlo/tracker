@@ -11,28 +11,29 @@ import java.util.List;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
+import deigojojlo.tracker.DataAnalist.SubType.MinionEntry;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class Minion {
-    private static Money dayMoney;
-    private static List<Money> data ;
+    private static MinionEntry dayMoney;
+    private static List<MinionEntry> data ;
     private static int allTimeMoney = 0;
     private static int monthlyTimeMoney = 0;
     {
         Gson gson = new Gson();
-        String path = FabricLoader.getInstance().getGameDir().toString() + "chatUtil/minon.json";
+        String path = FabricLoader.getInstance().getGameDir().toString() + "/tracker/minion.json";
 
         try (FileReader reader = new FileReader(path)){
-            Type itemListType = new TypeToken<List<Money>>(){}.getType(); // the type of the list
+            Type itemListType = new TypeToken<List<MinionEntry>>(){}.getType(); // the type of the list
             data = gson.fromJson(reader, itemListType ); // items
             
-            Money lastDay =  data.getLast();
+            MinionEntry lastDay =  data.getLast();
             LocalDate date = LocalDate.now();
 
             if (lastDay.getDate().equals(date.toString())){
                 dayMoney = lastDay ;
             } else {
-                dayMoney = new Money(date.toString(), 0);
+                dayMoney = new MinionEntry(date.toString(), 0);
                 data.addLast(dayMoney);
             }
         } catch (IOException error){
@@ -67,37 +68,12 @@ public class Minion {
 
     public static void save(){
         Gson gson = new Gson();
-        String path = FabricLoader.getInstance().getGameDir().toString() + "chatUtil/minion.json";
+        String path = FabricLoader.getInstance().getGameDir().toString() + "/tracker/minion.json";
 
         try (FileWriter writer = new FileWriter(path)){
             writer.write(gson.toJson(data));
         } catch (IOException error){
             error.printStackTrace();
-        }
-    }
-
-    private class Money {
-        String date;
-        int count;
-
-        private Money(String date, int count){
-            this.date = date;
-            this.count = count;
-        }
-        private String getDate(){
-            return this.date;
-        }
-
-        private int getCount(){
-            return this.count;
-        }
-
-        private void setDate(String date){
-            this.date = date;
-        }
-
-        private void setCount(int count){
-            this.count = count;
         }
     }
 }
