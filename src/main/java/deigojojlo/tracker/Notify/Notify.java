@@ -1,4 +1,4 @@
-package deigojojlo.chatutil.Notify;
+package deigojojlo.tracker.Notify;
 
 import com.mojang.authlib.minecraft.client.MinecraftClient;
 

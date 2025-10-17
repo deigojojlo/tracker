@@ -1,4 +1,4 @@
-package deigojojlo.chatutil.mixin;
+package deigojojlo.tracker.mixin;
 
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.server.MinecraftServer;
@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.text.Text;
-import deigojojlo.chatutil.DataAnalist.Minion;
-import deigojojlo.chatutil.ignore.Ignore;
+import deigojojlo.tracker.DataAnalist.Minion;
+import deigojojlo.tracker.ignore.Ignore;
 import java.util.regex.Pattern;
 @Mixin(MinecraftServer.class)
 public class ChatFilter {

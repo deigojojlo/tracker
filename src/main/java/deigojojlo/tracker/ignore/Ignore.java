@@ -1,4 +1,4 @@
-package deigojojlo.chatutil.ignore;
+package deigojojlo.tracker.ignore;
 
 import java.io.FileReader;
 import java.io.FileWriter;

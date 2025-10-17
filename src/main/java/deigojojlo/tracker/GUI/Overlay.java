@@ -1,9 +1,9 @@
-package deigojojlo.chatutil.GUI;
+package deigojojlo.tracker.GUI;
 
 
-import deigojojlo.chatutil.DataAnalist.Island;
-import deigojojlo.chatutil.DataAnalist.Minion;
-import deigojojlo.chatutil.Setting.Config;
+import deigojojlo.tracker.DataAnalist.Island;
+import deigojojlo.tracker.DataAnalist.Minion;
+import deigojojlo.tracker.Setting.Config;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;

@@ -1,4 +1,4 @@
-package deigojojlo.chatutil.DataAnalist;
+package deigojojlo.tracker.DataAnalist;
 
 public class Player {
     private int allTimeLevel;

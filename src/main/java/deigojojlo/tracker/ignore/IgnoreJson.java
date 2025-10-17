@@ -1,4 +1,4 @@
-package deigojojlo.chatutil.ignore;
+package deigojojlo.tracker.ignore;
 
 public class IgnoreJson {
     private String text;

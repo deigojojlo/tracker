@@ -1,4 +1,4 @@
-package deigojojlo.chatutil.mixin;
+package deigojojlo.tracker.mixin;
 
 import org.apache.logging.log4j.core.tools.picocli.CommandLine.Help.Ansi.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import deigojojlo.chatutil.DataAnalist.Island;
+import deigojojlo.tracker.DataAnalist.Island;
 import net.minecraft.client.gui.hud.InGameHud;
 
 @Mixin(InGameHud.class)

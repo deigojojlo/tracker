@@ -1,5 +1,4 @@
-package deigojojlo.chatutil.DataAnalist;
-
+package deigojojlo.tracker.DataAnalist;
 import java.util.Map;
 
 import org.spongepowered.asm.mixin.injection.modify.LocalVariableDiscriminator.Context.Local;
@@ -7,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.modify.LocalVariableDiscriminator.C
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import deigojojlo.chatutil.ignore.IgnoreJson;
+import deigojojlo.tracker.ignore.IgnoreJson;
 import net.fabricmc.loader.api.FabricLoader;
 
 import static java.util.Map.entry;

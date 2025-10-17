@@ -1,4 +1,4 @@
-package deigojojlo.chatutil.Setting;
+package deigojojlo.tracker.Setting;
 
 public class Config {
     public static final float TITLE_SCALE = 1;
