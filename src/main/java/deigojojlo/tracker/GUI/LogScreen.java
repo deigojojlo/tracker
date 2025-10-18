@@ -1,17 +1,17 @@
 package deigojojlo.tracker.GUI;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
-
 import java.util.ArrayList;
+import java.util.List;
 
 import deigojojlo.tracker.DataAnalist.Island;
 import deigojojlo.tracker.DataAnalist.Jobs;
 import deigojojlo.tracker.DataAnalist.Minion;
-import deigojojlo.tracker.DataAnalist.SubType.JobEntry;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.Text;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 
 public class LogScreen extends Screen {
@@ -174,6 +174,8 @@ public class LogScreen extends Screen {
                 draw4casesBackgrounds(context, startY);
                 renderClassicStatistics(context, paddingX, paddingY, cellWidth, cellHeight, category);
                 renderGraphContent(context, paddingX + cellWidth + 4, paddingY, cellWidth, cellHeight, "Graph 1: Données " + category + " Journalières");
+                Pair<List<Double>,List<Double>> g1 = Island.getLast7daysGraph();
+                Graph.drawGraph(textRenderer,context, paddingX, paddingY + cellHeight + 4, cellWidth, cellHeight, "gui.tracker.log.last7days", "gui.tracker.log.jour", "gui.tracker.log.level",g1.getLeft(), g1.getRight(), g1.getLeft(), g1.getRight());
                 break;
             case "Métier" :
                 drawCasesBackgrounds(context, startY, Jobs.JobsList.length);
