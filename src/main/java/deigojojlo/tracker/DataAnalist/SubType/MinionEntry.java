@@ -40,5 +40,30 @@ public class MinionEntry implements JsonEntry{
     public void setItems(int items) {
         this.items = items;
     }
+
+
+    public String getFormatMoney(){
+        if (this.getCount() > 1_000_000_000){
+            return (this.getCount() / 1_000_000_000 ) + "B";
+        } else if (this.getCount() > 1_000_000){
+            return (this.getCount() / 1_000_000 ) + "M";
+        } else if (this.getCount() > 1_000){
+            return (this.getCount() / 1_000) + "K";
+        } else {
+            return this.getCount() + "";
+        }
+    }
+
+    public String getFormatItems(){
+        if (this.getItems() > 1_000_000_000){
+            return (this.getItems() / 1_000_000_000 ) + "B";
+        } else if (this.getItems() > 1_000_000){
+            return (this.getItems() / 1_000_000 ) + "M";
+        } else if (this.getItems() > 1_000){
+            return (this.getItems() / 1_000) + "K";
+        } else {
+            return this.getItems() + "";
+        }
+    }
     
 }

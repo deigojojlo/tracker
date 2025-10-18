@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -17,7 +18,7 @@ import deigojojlo.tracker.util.Backup;
 import deigojojlo.tracker.util.DateUtil;
 
 public class Island implements Statistics{
-    private static Integer time = null;
+    private static Long time = null;
     private static IslandEntry dayLevel;
     private static List<IslandEntry> data ;
     private static int allTimeLevel = 0;
@@ -57,6 +58,8 @@ public class Island implements Statistics{
     }
 
     public static void addLevel(int amount){
+        if (time == null)
+            time = new Date().getTime();
         if (dayLevel != null)
             dayLevel.addLevel(amount);
         allTimeLevel += amount;
@@ -70,6 +73,18 @@ public class Island implements Statistics{
         } catch (IOException error){
             error.printStackTrace();
         }
+    }
+
+    public static String getTime(){
+        if (time == null) return "0s";
+        long t = new Date().getTime();
+        long millis = t - time;
+        long totalSeconds = millis / 1000;
+        long seconds = totalSeconds % 60;
+        long totalMinutes = totalSeconds / 60;
+        long minutes = totalMinutes % 60;
+        long hours = totalMinutes / 60;
+        return String.format("%d:%02d:%02d", hours, minutes, seconds);
     }
 
     public static int getLevel(){
@@ -101,6 +116,19 @@ public class Island implements Statistics{
         return last30days;
     }
 
+    public static String getFormatLast30days(){
+        return new IslandEntry(null, last30days).getFormatLevel();
+    }
+    public static String getFormatLastMonth(){
+        return new IslandEntry(null, lastMonth).getFormatLevel();
+    }
+    public static String getFormatLevel(){
+        return dayLevel.getFormatLevel();
+    }
+
+    public static String getFormatAllTime(){
+        return new IslandEntry(null, allTimeLevel).getFormatLevel();
+    }
     public static void calculateLast30days(){
         last30days = 0;
         String[] today = LocalDate.now().toString().split("-");

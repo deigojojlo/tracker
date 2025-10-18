@@ -45,7 +45,7 @@ public class LogScreen extends Screen {
         int tabWidth = tabTotalWidth / tabCount;
         int tabY = y + 5; 
 
-        this.clearChildren(); 
+        this.clearChildren();
 
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.votremod.log.tab.metier"), button -> {
             this.currentTab = 0;
@@ -74,7 +74,18 @@ public class LogScreen extends Screen {
         int contentY = y + 30;
         context.drawHorizontalLine(x + 5, x + windowWidth - 5, contentY, 0xFF888888);
         
-        // 2. Dessiner ensuite TOUS les textes et graphiques par-dessus
+        // affichage de 3 bouttons
+        int tabY = y + 5;
+        int tabWidth = (windowWidth - 10) / 3;
+        context.fill(x + 5, tabY , tabWidth -1 , 20, 0x9999FF99);
+        context.drawBorder(x + 5, tabY , tabWidth -1 , 20, 0x5555FF99);
+        context.drawText(textRenderer, Text.translatable("gui.tracker.log.metier"), x + 5, tabY , 0x000000, false);
+        context.fill(x + 5 + tabWidth, tabY ,tabWidth -1 , 20,0x9999FF99 );
+        context.drawBorder(x + 5 + tabWidth, tabY , tabWidth -1 , 20, 0x5555FF99);
+        context.drawText(textRenderer, Text.translatable("gui.tracker.log.argent"),x + 5 + tabWidth, tabY , 0x000000, false);
+        context.fill(x + 5 + 2 * tabWidth, tabY,  tabWidth -1 , 20, 0x9999FF99);
+        context.drawBorder(x + 5 + 2 * tabWidth, tabY, tabWidth -1 , 20, 0x5555FF99);
+        context.drawText(textRenderer, Text.translatable("gui.tracker.log.niveaux"),x + 5 + 2 * tabWidth, tabY, 0x000000, false);
         switch (currentTab) {
             case 0:
                 drawContents(context, "Métier", contentY);
@@ -87,17 +98,11 @@ public class LogScreen extends Screen {
                 break;
         }
         
-        //super.render(context, mouseX, mouseY, delta);
     }
     
-    // --- NOUVELLES MÉTHODES DE RENDU ---
-
-    /**
-     * Dessine uniquement les fonds (les boîtes) pour toutes les 4 cases.
-     */
     private void draw4casesBackgrounds(DrawContext context, int startY) {
         int contentWidth = windowWidth - 10;
-        int contentHeight = windowHeight - (startY - y) - 5; 
+        int contentHeight = windowHeight - (startY - y) - 5;
         
         int cellWidth = (contentWidth / 2) - 2;
         int cellHeight = (contentHeight / 2) - 2;

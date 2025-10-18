@@ -8,8 +8,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.spongepowered.asm.mixin.injection.modify.LocalVariableDiscriminator.Context.Local;
+import java.util.Date;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -17,7 +16,6 @@ import com.google.gson.Gson;
 import deigojojlo.tracker.DataAnalist.SubType.MinionEntry;
 import deigojojlo.tracker.util.Backup;
 import deigojojlo.tracker.util.DateUtil;
-import net.fabricmc.loader.api.FabricLoader;
 
 public class Minion implements Statistics {
     private static MinionEntry dayMoney;
@@ -25,7 +23,8 @@ public class Minion implements Statistics {
     private static MinionEntry allTimeMoney = new MinionEntry(null,0.0,0);
     private static MinionEntry last30days = new MinionEntry(null,0.0,0);
     private static MinionEntry lastMonth = new MinionEntry(null,0.0,0);
-    
+    private static Long time = null;
+
     public static void load(){
         Gson gson = new Gson();
         Path path = Backup.createFile("Minion.json");
@@ -56,6 +55,8 @@ public class Minion implements Statistics {
     }
 
     public static void addMoney(double amount){
+        if (time == null)
+            time = new Date().getTime();
         if (dayMoney != null)
             dayMoney.setCount(dayMoney.getCount() + amount);
         if (allTimeMoney != null)
@@ -73,6 +74,28 @@ public class Minion implements Statistics {
         if (dayMoney != null)
             return dayMoney.getCount();
         return 0;
+    }
+
+    public static String getTime(){
+        if (time == null) return "0s";
+        long t = new Date().getTime();
+        long millis = t - time;
+        long totalSeconds = millis / 1000;
+        long seconds = totalSeconds % 60;
+        long totalMinutes = totalSeconds / 60;
+        long minutes = totalMinutes % 60;
+        long hours = totalMinutes / 60;
+        return String.format("%d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    public static String getFormatMoney(){
+        if (dayMoney == null) return "0";
+        return dayMoney.getFormatMoney();
+    }
+
+    public static String getFormatItems(){
+        if (dayMoney == null) return "0";
+        return dayMoney.getFormatItems();
     }
 
     public static int getItems(){

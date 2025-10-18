@@ -28,6 +28,16 @@ public class IslandEntry {
             this.count = count;
         }
 
+        public String getFormatLevel(){
+            if (this.count >= 1_000_000_000){
+                return (this.count / 1_000_000_000.0) + "B";
+            } else if (this.count >= 1_000_000){
+                return (this.count / 1_000_000) + "M";
+            } else if (this.count >= 1_000){
+                return (this.count >= 1_000) + "K";
+            } return this.count + "";
+        }
+        
         public void add(JsonEntry e){
             if (e instanceof IslandEntry entry)
                 this.count += entry.count;
