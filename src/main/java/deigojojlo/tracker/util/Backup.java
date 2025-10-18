@@ -54,5 +54,21 @@ public class Backup {
             return nameWithoutExt + index + ext; // Insère l'index avant l'extension
         }
     }
+
+    public static Path createFile(String path){
+        Path modDir = Paths.get(System.getenv("APPDATA"),"tracker");
+        Path file = Paths.get(System.getenv("APPDATA"), "tracker", path);
+        try {
+            Files.createDirectory(modDir);
+        } catch (IOException exception){
+            // File already exist
+        }
+        try {
+            Files.createFile(file);
+        } catch (IOException exception){
+            // File already exist
+        }
+        return file;
+    }
 }
 

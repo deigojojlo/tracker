@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.spongepowered.asm.mixin.injection.modify.LocalVariableDiscriminator.Context.Local;
+
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
@@ -20,59 +22,76 @@ import net.fabricmc.loader.api.FabricLoader;
 public class Minion implements Statistics {
     private static MinionEntry dayMoney;
     private static List<MinionEntry> data ;
-    private static int allTimeMoney = 0;
-    private static int last30days = 0;
-    private static int lastMonth = 0;
-    {
+    private static MinionEntry allTimeMoney = new MinionEntry(null,0.0,0);
+    private static MinionEntry last30days = new MinionEntry(null,0.0,0);
+    private static MinionEntry lastMonth = new MinionEntry(null,0.0,0);
+    
+    public static void load(){
         Gson gson = new Gson();
-        Path path = createFile("Minion.json");
+        Path path = Backup.createFile("Minion.json");
 
         try (FileReader reader = new FileReader(path.toAbsolutePath().toString())){
             Type itemListType = new TypeToken<List<MinionEntry>>(){}.getType(); // the type of the list
             data = gson.fromJson(reader, itemListType ); // items
-            
+            if (data == null) data = new ArrayList<>();
             MinionEntry lastDay =  data.getLast();
             LocalDate date = LocalDate.now();
 
-            if (lastDay.getDate().equals(date.toString())){
-                dayMoney = lastDay ;
-            } else {
-                dayMoney = new MinionEntry(date.toString(), 0);
+            if ( lastDay == null || !lastDay.getDate().equals(date.toString())){
+                dayMoney = new MinionEntry(date.toString(), 0,0);
                 data.addLast(dayMoney);
+            } else {
+                dayMoney = lastDay ;
             }
         } catch (IOException error){
             data = new ArrayList<>();
+            dayMoney = new MinionEntry(LocalDate.now().toString(), 0,0);
+            data.add(dayMoney);
             error.printStackTrace();
         }
 
         data.forEach(level -> {
-            allTimeMoney += level.getCount();
+            allTimeMoney.add(level);
         });
     }
 
-    public static void addMoney(int amount){
+    public static void addMoney(double amount){
         if (dayMoney != null)
             dayMoney.setCount(dayMoney.getCount() + amount);
+        if (allTimeMoney != null)
+            allTimeMoney.setCount(allTimeMoney.getCount() + amount);
     }
 
-    public static int getMoney(){
+    public static void addItems(int items){
+        if (dayMoney != null)
+            dayMoney.setItems(dayMoney.getItems() + items);
+        if (allTimeMoney != null)
+            allTimeMoney.setItems(allTimeMoney.getItems() + items);
+    }
+
+    public static double getMoney(){
         if (dayMoney != null)
             return dayMoney.getCount();
         return 0;
     }
 
+    public static int getItems(){
+        if (dayMoney != null)
+            return dayMoney.getItems();
+        return 0;
+    }
 
-    public static int getAllTimeMoney(){
+    public static MinionEntry getAllTimeMoney(){
         return allTimeMoney;
     }
 
-    public static int getLastMonth(){
+    public static MinionEntry getLastMonth(){
         String[] splitedDate = LocalDate.now().toString().split("-");
         calculateLastMonth(Integer.parseInt(splitedDate[1]), Integer.parseInt(splitedDate[0]));
         return lastMonth;
     }
 
-    public static int getLast30days(){
+    public static MinionEntry getLast30days(){
         calculateLast30days();
         return last30days;
     }
@@ -88,22 +107,22 @@ public class Minion implements Statistics {
     }
 
     public static void calculateLast30days(){
-        last30days = 0;
+        last30days = new MinionEntry(null, 0, 0);
         String[] today = LocalDate.now().toString().split("-");
         int id = DateUtil.createIdentifier(Integer.parseInt(today[2]), Integer.parseInt(today[1]), Integer.parseInt(today[0]));
         for (MinionEntry entry : data){
             String[] splitedDate = entry.getDate().split("-");
             int entryId = DateUtil.createIdentifier(Integer.parseInt(splitedDate[2]), Integer.parseInt(splitedDate[1]), Integer.parseInt(splitedDate[0]));
-            if (id - entryId < 31 ) last30days += entry.getCount();
+            if (id - entryId < 31 ) last30days.add(entry);
         }
     }
 
     public static void calculateLastMonth(int month,int year){
-        lastMonth = 0;
+        lastMonth = new MinionEntry(null, 0, 0);
         for (MinionEntry entry : data){
             String[] splitedDate = entry.getDate().split("-");
             if (Integer.parseInt(splitedDate[0]) == year && Integer.parseInt(splitedDate[1]) == month)
-                lastMonth += entry.getCount();
+                lastMonth.add(entry);
         }
     }
 }

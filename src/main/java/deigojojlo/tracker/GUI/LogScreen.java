@@ -4,6 +4,9 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+
+import java.util.ArrayList;
+
 import deigojojlo.tracker.DataAnalist.Island;
 import deigojojlo.tracker.DataAnalist.Jobs;
 import deigojojlo.tracker.DataAnalist.Minion;
@@ -71,9 +74,6 @@ public class LogScreen extends Screen {
         int contentY = y + 30;
         context.drawHorizontalLine(x + 5, x + windowWidth - 5, contentY, 0xFF888888);
         
-        // 1. Dessiner d'abord TOUS les fonds des cases pour éviter les problèmes d'empilement Z-fighting
-        drawBackgrounds(context, contentY);
-
         // 2. Dessiner ensuite TOUS les textes et graphiques par-dessus
         switch (currentTab) {
             case 0:
@@ -95,7 +95,7 @@ public class LogScreen extends Screen {
     /**
      * Dessine uniquement les fonds (les boîtes) pour toutes les 4 cases.
      */
-    private void drawBackgrounds(DrawContext context, int startY) {
+    private void draw4casesBackgrounds(DrawContext context, int startY) {
         int contentWidth = windowWidth - 10;
         int contentHeight = windowHeight - (startY - y) - 5; 
         
@@ -118,6 +118,31 @@ public class LogScreen extends Screen {
         context.fill(paddingX + cellWidth + 4, paddingY + cellHeight + 4, paddingX + cellWidth + 4 + cellWidth, paddingY + cellHeight + 4 + cellHeight, 0x80222222); // Case 4 (G3)
         context.drawBorder(paddingX + cellWidth + 4, paddingY + cellHeight + 4, cellWidth, cellHeight, 0xFF444444);
     }
+
+    private ArrayList<int[]> drawCasesBackgrounds(DrawContext context,int startY, int number){
+        int contentWidth = windowWidth - 10;
+        int contentHeight = windowHeight - (startY - y) - 5;
+        
+        int cellWidth = (contentWidth / (number - number / 2)) - 2;
+        int cellHeight = (contentHeight / 2) - 2;
+
+        int paddingX = x + 5;
+        int paddingY = startY + 5;
+
+        // 2 lines and number/ 2 columns
+        ArrayList<int[]> contentPlacement = new ArrayList<>();
+        int caseNum = 0;
+        while (caseNum < number){
+            int line = caseNum >= number - number / 2 ? 1 : 0;
+            int y = paddingY + (cellHeight + 4) * line;
+            int x = paddingX + (cellWidth + 4) * (caseNum % (number - number /2)) + ( number % 2 == 1 && line == 1 ? cellWidth / 2 : 0);
+            contentPlacement.add(new int[] {x,y,cellWidth,cellHeight});
+            context.fill(x, y, x + cellWidth, y + cellHeight, 0x80222222); // Case 3 (G2)
+            context.drawBorder(x, y, cellWidth, cellHeight, 0xFF444444);
+            caseNum++;
+        }
+        return contentPlacement;
+    }
     
     /**
      * Dessine uniquement le texte et les graphiques par-dessus les fonds.
@@ -135,26 +160,42 @@ public class LogScreen extends Screen {
 
         // Case 1: Statistiques (Haut-Gauche)
         switch (category) {
-            case "Minion","Island" :
-                renderClassicStatistique(context, paddingX, paddingY, cellWidth, cellHeight, category);
-                // Case 2: Graphique 1 (Haut-Droite)
+            case "Argent" :
+                draw4casesBackgrounds(context, startY);
+                renderClassicStatistics(context, paddingX, paddingY, cellWidth, cellHeight, category+" : Argent");
+                renderClassicStatistics(context, paddingX + 4 + cellWidth, paddingY , cellWidth, cellHeight, category+" : Items");
+                break;
+            case "Niveaux" :
+                draw4casesBackgrounds(context, startY);
+                renderClassicStatistics(context, paddingX, paddingY, cellWidth, cellHeight, category);
                 renderGraphContent(context, paddingX + cellWidth + 4, paddingY, cellWidth, cellHeight, "Graph 1: Données " + category + " Journalières");
                 break;
-            case "Jobs" :
+            case "Métier" :
+                drawCasesBackgrounds(context, startY, Jobs.JobsList.length);
                 int i = 0;
+                int number = Jobs.JobsList.length;
+                int w = contentWidth / (number - number/2);
+                int h = cellHeight;
+                int halfInf = number - number / 2;
+                int halfSup = number / 2;
+                int numberParity = number % 2 ;
                 for (String job : Jobs.JobsList){
-                    renderJobsStatisqique(context, paddingX + (contentWidth / Jobs.JobsList.length + 1) * i++, paddingY, contentWidth / Jobs.JobsList.length, cellHeight, job);
+                    int y = paddingY + ( i >= halfInf ? h + 2 : 0) ;
+                    int x = paddingX + ( i > halfInf && numberParity == 1 ? w / 2 : 0) + (w + 2) * (i % halfSup);
+                    
+                    renderJobsStatistcs(context, x, y, w, h, job);
+                    i++;
                 }
 
         }
         // Case 3: Graphique 2 (Bas-Gauche)
-        renderGraphContent(context, paddingX, paddingY + cellHeight + 4, cellWidth, cellHeight, "Graph 2: Données " + category + " Mensuelles");
+        //renderGraphContent(context, paddingX, paddingY + cellHeight + 4, cellWidth, cellHeight, "Graph 2: Données " + category + " Mensuelles");
 
         // Case 4: Graphique 3 (Bas-Droite)
-        renderGraphContent(context, paddingX + cellWidth + 4, paddingY + cellHeight + 4, cellWidth, cellHeight, "Graph 3: Progression " + category + " Global");
+        //renderGraphContent(context, paddingX + cellWidth + 4, paddingY + cellHeight + 4, cellWidth, cellHeight, "Graph 3: Progression " + category + " Global");
     }
 
-    private void renderClassicStatistique(DrawContext context, int sx, int sy, int sw, int sh, String category){
+    private void renderClassicStatistics(DrawContext context, int sx, int sy, int sw, int sh, String category){
         TextRenderer textRenderer = client.textRenderer;
 
         // Titre
@@ -163,12 +204,13 @@ public class LogScreen extends Screen {
 
         // Liste des périodes (texte)
         int currentY = sy + 20;
-        String[] periods = {"Jour", "30 Derniers Jours", "Dernier Mois", "Global"};
+        String[] periods = {"Jour", "30 Derniers Jours", "Ce Mois", "Global"};
         String[] values = {"error", "error", "error", "error"};
 
         switch (category) {
-            case "Minion" : values = new String[] {Minion.getMoney() + "", Minion.getLast30days() + "", Minion.getLastMonth() + "", Minion.getAllTimeMoney() + ""};break;
-            case "Island" : values = new String[] {Island.getLevel() + "", Island.getLast30days() + "", Island.getLastMonth() + "", Minion.getAllTimeMoney() + ""};break;
+            case "Argent : Argent" : values = new String[] {Minion.getMoney() + "", Minion.getLast30days().getCount() + "", Minion.getLastMonth().getCount() + "", Minion.getAllTimeMoney().getCount() + ""};break;
+            case "Argent : Items" : values = new String[] {Minion.getItems() + "", Minion.getLast30days().getItems() + "", Minion.getLastMonth().getItems() + "", Minion.getAllTimeMoney().getItems() + ""};break;
+            case "Niveaux" : values = new String[] {Island.getLevel() + "", Island.getLast30days() + "", Island.getLastMonth() + "", Island.getAllTimeLevel() + ""};break;
         }
 
 
@@ -179,7 +221,7 @@ public class LogScreen extends Screen {
         }
     }
 
-    private void renderJobsStatisqique(DrawContext context, int sx, int sy, int sw, int sh,String job){
+    private void renderJobsStatistcs(DrawContext context, int sx, int sy, int sw, int sh,String job){
         TextRenderer textRenderer = client.textRenderer;
 
         // Titre
@@ -192,7 +234,7 @@ public class LogScreen extends Screen {
         String[] values = {serializedJob[0] + "", serializedJob[1] + "", serializedJob[2] + ""};
 
         for (int i = 0; i < lines.length; i++) {
-            context.drawText(textRenderer, lines[i] + ":", sx + 10, currentY, 0xFFCCCCCC, false);
+            context.drawText(textRenderer, lines[i], sx + 10, currentY, 0xFFCCCCCC, false);
             context.drawText(textRenderer, values[i], sx + sw - textRenderer.getWidth(values[i]) - 10, currentY, 0xFF00FF00, false);
             currentY += 12;
         }

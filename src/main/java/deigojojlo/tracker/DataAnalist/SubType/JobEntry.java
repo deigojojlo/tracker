@@ -29,7 +29,7 @@ public class JobEntry implements JsonEntry {
             case "LUMBERJACK" : return this.lumberjack;
             case "FISHER" : return this.fisher;
             case "EXPLORER" : return this.explorer;
-            default : return null;
+            default : return new JobWrapper();
         }
     }
     public String getDate(){

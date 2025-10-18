@@ -9,6 +9,7 @@ import deigojojlo.tracker.DataAnalist.Jobs;
 import deigojojlo.tracker.DataAnalist.Minion;
 import deigojojlo.tracker.GUI.LogScreen;
 import deigojojlo.tracker.GUI.Overlay;
+import deigojojlo.tracker.ignore.Ignore;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -22,13 +23,11 @@ import net.minecraft.client.util.InputUtil;
 public class ObTrackerMod implements ClientModInitializer {
 	public static final String MOD_ID = "chatutil";
 	private static KeyBinding logKeyBinding;
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
+
 	@Override
 	public void onInitializeClient() {
 		ClientPlayConnectionEvents.DISCONNECT.register(this::onClientDisconnect);
-		ClientPlayConnectionEvents.JOIN.register((handler,sender,client) -> onClientDisconnect(handler, client));
+		ClientPlayConnectionEvents.JOIN.register((handler,sender,client) -> onClientJoin(handler, client));
 		HudRenderCallback.EVENT.register(Overlay::render);
 		Timer saveTimer = new Timer();
 		/*
@@ -41,7 +40,7 @@ public class ObTrackerMod implements ClientModInitializer {
 		// 1. Créer le KeyBinding (par exemple, touche L)
         logKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.votremod.open_log", // Clé de traduction
-            InputUtil.Type.KEYSYM, 
+            InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_L, // Touche L
             "category.votremod.log" // Catégorie
         ));
@@ -50,7 +49,7 @@ public class ObTrackerMod implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (logKeyBinding.wasPressed()) {
                 // Ouvre l'écran
-                client.setScreen(new LogScreen()); 
+                client.setScreen(new LogScreen());
             }
         });
 	}
@@ -59,5 +58,12 @@ public class ObTrackerMod implements ClientModInitializer {
 		Island.save();
 		Jobs.save();
 		Minion.save();
+	}
+
+	private void onClientJoin(ClientPlayNetworkHandler handler, MinecraftClient client){
+		Ignore.load();
+		Jobs.load();
+		Minion.load();
+		Island.load();
 	}
 }

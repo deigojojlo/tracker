@@ -22,25 +22,29 @@ public class Jobs implements Statistics{
     private static JobEntry last30days;
     private static JobEntry lastMonth;
     public static final String[] JobsList = {"Miner","Hunter","Farmer","Lumberjack","Fisher","Explorer"};
-    {
+    
+    public static void load(){
         Gson gson = new Gson();
-        Path path = createFile("Jobs.json");
+        Path path = Backup.createFile("Jobs.json");
 
         try (FileReader reader = new FileReader(path.toAbsolutePath().toString())){
             Type itemListType = new TypeToken<List<JobEntry>>(){}.getType(); // the type of the list
             data = gson.fromJson(reader, itemListType ); // items
-            
+            if (data == null) data = new ArrayList<>();
+
             JobEntry lastDay =  data.getLast();
             LocalDate date = LocalDate.now();
-
-            if (lastDay.getDate().equals(date.toString())){
-                dayJob = lastDay ;
-            } else {
+        
+            if (lastDay == null || !lastDay.getDate().equals(date.toString())){
                 dayJob = new JobEntry();
                 data.addLast(dayJob);
+            } else {
+                dayJob = lastDay ;
             }
         } catch (IOException error){
             data = new ArrayList<>();
+            dayJob = new JobEntry();
+            data.add(dayJob);
             error.printStackTrace();
         }
 
@@ -53,15 +57,18 @@ public class Jobs implements Statistics{
     }
     
     public static void addXP(String job,int amount){
-        dayJob.getWrapper(job).addXP(amount);
+        if (dayJob != null)
+            dayJob.getWrapper(job).addXP(amount);
     };
 
     public static void addLevel(String job,int amount){
-        dayJob.getWrapper(job).addLevel(amount);;
+        if (dayJob != null)
+            dayJob.getWrapper(job).addLevel(amount);;
     }
 
     public static void addMoney(String job,int amount){
-        dayJob.getWrapper(job).addMoney(amount);;
+        if (dayJob != null)
+            dayJob.getWrapper(job).addMoney(amount);;
     }
 
     public static void save(){
@@ -97,11 +104,15 @@ public class Jobs implements Statistics{
 
 
     public static int[][] getJob(){
-        return dayJob.serialize();
+        if (dayJob != null)
+            return dayJob.serialize();
+        return new JobEntry().serialize();
     }
 
     public static int[] getJob(String job){
-        return dayJob.getWrapper(job).serialize();
+        if (dayJob != null)
+            return dayJob.getWrapper(job).serialize();
+        return new JobEntry().getWrapper(job).serialize();
     }
 
     public static int[][] getDay(String date){
@@ -109,7 +120,7 @@ public class Jobs implements Statistics{
             if (jobEntry.getDate().equals(date))
                 return jobEntry.serialize();
         }
-        return null;
+        return new JobEntry().serialize();
     }
 
     public static int[][] getLastMonth(){

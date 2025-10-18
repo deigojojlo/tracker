@@ -15,7 +15,6 @@ import com.google.gson.reflect.TypeToken;
 import deigojojlo.tracker.DataAnalist.SubType.IslandEntry;
 import deigojojlo.tracker.util.Backup;
 import deigojojlo.tracker.util.DateUtil;
-import net.fabricmc.loader.api.FabricLoader;
 
 public class Island implements Statistics{
     private static Integer time = null;
@@ -24,29 +23,34 @@ public class Island implements Statistics{
     private static int allTimeLevel = 0;
     private static int lastMonth = 0;
     private static int last30days = 0;
-    {
+
+
+    public static void load(){
         Gson gson = new Gson();
 
-        Path path = createFile("Island.json");
+        Path path = Backup.createFile("Island.json");
 
         try (FileReader reader = new FileReader(path.toAbsolutePath().toString())){
             Type itemListType = new TypeToken<List<IslandEntry>>(){}.getType(); // the type of the list
             data = gson.fromJson(reader, itemListType ); // items
-            
+            if (data == null) data = new ArrayList<>();
+
             IslandEntry lastDay =  data.getLast();
             LocalDate date = LocalDate.now();
-
-            if (lastDay.getDate().equals(date.toString())){
-                dayLevel = lastDay ;
+            if (lastDay == null || !lastDay.getDate().equals(date.toString())){
+                dayLevel = new IslandEntry(date.toString(), 0);
+                data.add(dayLevel);
             } else {
-                dayLevel = new IslandEntry(date.toString(),0);
-                data.addLast(dayLevel);
+                dayLevel = lastDay ;
             }
         } catch (IOException error){
             data = new ArrayList<>();
+            dayLevel = new IslandEntry(LocalDate.now().toString(), 0);
+            data.add(dayLevel);
             error.printStackTrace();
         }
 
+        allTimeLevel = 0;
         data.forEach(level -> {
             allTimeLevel += level.getCount();
         });
@@ -55,6 +59,7 @@ public class Island implements Statistics{
     public static void addLevel(int amount){
         if (dayLevel != null)
             dayLevel.addLevel(amount);
+        allTimeLevel += amount;
     }
 
     public static void save(){
