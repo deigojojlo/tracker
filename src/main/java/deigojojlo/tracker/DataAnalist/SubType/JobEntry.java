@@ -22,7 +22,7 @@ public class JobEntry implements JsonEntry {
     }
 
     public JobWrapper getWrapper(String job){
-        switch (job){
+        switch (job.toUpperCase()){
             case "MINER" : return this.miner;
             case "HUNTER" : return this.hunter;
             case "FARMER" : return this.farmer;

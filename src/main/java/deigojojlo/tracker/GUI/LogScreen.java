@@ -4,6 +4,10 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import deigojojlo.tracker.DataAnalist.Island;
+import deigojojlo.tracker.DataAnalist.Jobs;
+import deigojojlo.tracker.DataAnalist.Minion;
+import deigojojlo.tracker.DataAnalist.SubType.JobEntry;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.util.math.MathHelper;
 
@@ -66,8 +70,6 @@ public class LogScreen extends Screen {
         // Séparateur entre les onglets et le contenu
         int contentY = y + 30;
         context.drawHorizontalLine(x + 5, x + windowWidth - 5, contentY, 0xFF888888);
-
-        // --- NOUVEL ORDRE DE RENDU ---
         
         // 1. Dessiner d'abord TOUS les fonds des cases pour éviter les problèmes d'empilement Z-fighting
         drawBackgrounds(context, contentY);
@@ -132,11 +134,19 @@ public class LogScreen extends Screen {
         int paddingY = startY + 5;
 
         // Case 1: Statistiques (Haut-Gauche)
-        renderStatistiqueContent(context, paddingX, paddingY, cellWidth, cellHeight, category);
+        switch (category) {
+            case "Minion","Island" :
+                renderClassicStatistique(context, paddingX, paddingY, cellWidth, cellHeight, category);
+                // Case 2: Graphique 1 (Haut-Droite)
+                renderGraphContent(context, paddingX + cellWidth + 4, paddingY, cellWidth, cellHeight, "Graph 1: Données " + category + " Journalières");
+                break;
+            case "Jobs" :
+                int i = 0;
+                for (String job : Jobs.JobsList){
+                    renderJobsStatisqique(context, paddingX + (contentWidth / Jobs.JobsList.length + 1) * i++, paddingY, contentWidth / Jobs.JobsList.length, cellHeight, job);
+                }
 
-        // Case 2: Graphique 1 (Haut-Droite)
-        renderGraphContent(context, paddingX + cellWidth + 4, paddingY, cellWidth, cellHeight, "Graph 1: Données " + category + " Journalières");
-
+        }
         // Case 3: Graphique 2 (Bas-Gauche)
         renderGraphContent(context, paddingX, paddingY + cellHeight + 4, cellWidth, cellHeight, "Graph 2: Données " + category + " Mensuelles");
 
@@ -144,10 +154,7 @@ public class LogScreen extends Screen {
         renderGraphContent(context, paddingX + cellWidth + 4, paddingY + cellHeight + 4, cellWidth, cellHeight, "Graph 3: Progression " + category + " Global");
     }
 
-    /**
-     * Dessine le contenu de la case de statistiques (titre et texte)
-     */
-    private void renderStatistiqueContent(DrawContext context, int sx, int sy, int sw, int sh, String category) {
+    private void renderClassicStatistique(DrawContext context, int sx, int sy, int sw, int sh, String category){
         TextRenderer textRenderer = client.textRenderer;
 
         // Titre
@@ -157,10 +164,35 @@ public class LogScreen extends Screen {
         // Liste des périodes (texte)
         int currentY = sy + 20;
         String[] periods = {"Jour", "30 Derniers Jours", "Dernier Mois", "Global"};
-        String[] values = {"1200", "35000", "34000", "500000"}; 
+        String[] values = {"error", "error", "error", "error"};
+
+        switch (category) {
+            case "Minion" : values = new String[] {Minion.getMoney() + "", Minion.getLast30days() + "", Minion.getLastMonth() + "", Minion.getAllTimeMoney() + ""};break;
+            case "Island" : values = new String[] {Island.getLevel() + "", Island.getLast30days() + "", Island.getLastMonth() + "", Minion.getAllTimeMoney() + ""};break;
+        }
+
 
         for (int i = 0; i < periods.length; i++) {
             context.drawText(textRenderer, periods[i] + ":", sx + 10, currentY, 0xFFCCCCCC, false);
+            context.drawText(textRenderer, values[i], sx + sw - textRenderer.getWidth(values[i]) - 10, currentY, 0xFF00FF00, false);
+            currentY += 12;
+        }
+    }
+
+    private void renderJobsStatisqique(DrawContext context, int sx, int sy, int sw, int sh,String job){
+        TextRenderer textRenderer = client.textRenderer;
+
+        // Titre
+        context.drawText(textRenderer, Text.literal("Statistiques " + job), sx + 5, sy + 5, 0xFFFFFFFF, false);
+        context.drawHorizontalLine(sx + 5, sx + sw - 5, sy + 15, 0xFF888888);
+
+        int currentY = sy + 20;
+        String[] lines = {"Argent", "Niveaux", "XP"};
+        int[] serializedJob = Jobs.getJob(job);
+        String[] values = {serializedJob[0] + "", serializedJob[1] + "", serializedJob[2] + ""};
+
+        for (int i = 0; i < lines.length; i++) {
+            context.drawText(textRenderer, lines[i] + ":", sx + 10, currentY, 0xFFCCCCCC, false);
             context.drawText(textRenderer, values[i], sx + sw - textRenderer.getWidth(values[i]) - 10, currentY, 0xFF00FF00, false);
             currentY += 12;
         }

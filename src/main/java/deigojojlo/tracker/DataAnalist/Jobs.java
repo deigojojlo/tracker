@@ -21,6 +21,7 @@ public class Jobs implements Statistics{
     private static JobEntry allTimeJobs;
     private static JobEntry last30days;
     private static JobEntry lastMonth;
+    public static final String[] JobsList = {"Miner","Hunter","Farmer","Lumberjack","Fisher","Explorer"};
     {
         Gson gson = new Gson();
         Path path = createFile("Jobs.json");
@@ -97,6 +98,10 @@ public class Jobs implements Statistics{
 
     public static int[][] getJob(){
         return dayJob.serialize();
+    }
+
+    public static int[] getJob(String job){
+        return dayJob.getWrapper(job).serialize();
     }
 
     public static int[][] getDay(String date){
