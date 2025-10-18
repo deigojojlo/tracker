@@ -16,6 +16,10 @@ public class IslandEntry {
             return this.count;
         }
 
+        public void addLevel(int amount){
+            this.count += amount;
+        }
+
         protected void setDate(String date){
             this.date = date;
         }

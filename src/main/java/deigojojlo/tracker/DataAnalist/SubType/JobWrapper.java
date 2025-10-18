@@ -59,4 +59,13 @@ public class JobWrapper{
         this.money += wrapper.money;
         this.xp += wrapper.xp;
     }
+
+    public int[] serialize(){
+        return new int[] {
+            this.money,
+            this.level,
+            this.xp
+        };
+    }
+
 }

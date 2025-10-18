@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +11,11 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import deigojojlo.tracker.DataAnalist.SubType.IslandEntry;
 import deigojojlo.tracker.DataAnalist.SubType.JobEntry;
+import deigojojlo.tracker.util.Backup;
 import deigojojlo.tracker.util.DateUtil;
-import net.fabricmc.loader.api.FabricLoader;
 
-public class Jobs {
-    private static Jobs job = new Jobs();
+public class Jobs implements Statistics{
     private static List<JobEntry> data;
     private static JobEntry dayJob;
     private static JobEntry allTimeJobs;
@@ -24,9 +23,9 @@ public class Jobs {
     private static JobEntry lastMonth;
     {
         Gson gson = new Gson();
-        String path = FabricLoader.getInstance().getGameDir().toString() + "/tracker/jobs.json";
+        Path path = createFile("Jobs.json");
 
-        try (FileReader reader = new FileReader(path)){
+        try (FileReader reader = new FileReader(path.toAbsolutePath().toString())){
             Type itemListType = new TypeToken<List<JobEntry>>(){}.getType(); // the type of the list
             data = gson.fromJson(reader, itemListType ); // items
             
@@ -43,6 +42,13 @@ public class Jobs {
             data = new ArrayList<>();
             error.printStackTrace();
         }
+
+        last30days = new JobEntry();
+        lastMonth = new JobEntry();
+        allTimeJobs = new JobEntry();
+        data.forEach(entry -> {
+            allTimeJobs.add(entry);
+        });
     }
     
     public static void addXP(String job,int amount){
@@ -59,9 +65,8 @@ public class Jobs {
 
     public static void save(){
         Gson gson = new Gson();
-        String path = FabricLoader.getInstance().getGameDir().toString() + "/tracker/jobs.json";
-
-        try (FileWriter writer = new FileWriter(path)){
+        Path path = Backup.backup("Jobs.json");
+        try (FileWriter writer = new FileWriter(path.toAbsolutePath().toString())){
             data.getLast().copy(dayJob);
             writer.write(gson.toJson(data));
         } catch (IOException error){
@@ -89,4 +94,40 @@ public class Jobs {
         }
     }
 
+
+    public static int[][] getJob(){
+        return dayJob.serialize();
+    }
+
+    public static int[][] getDay(String date){
+        for (JobEntry jobEntry : data) {
+            if (jobEntry.getDate().equals(date))
+                return jobEntry.serialize();
+        }
+        return null;
+    }
+
+    public static int[][] getLastMonth(){
+        String[] splitedDate = LocalDate.now().toString().split("-");
+        calculateLastMonth(Integer.parseInt(splitedDate[1]), Integer.parseInt(splitedDate[0]));
+        return lastMonth.serialize();
+    }
+
+    public static int[][] getLast30days(){
+        calculateLast30days();
+        return last30days.serialize();
+    }
+
+    public static int[] getLastMonth(String job){
+        String[] splitedDate = LocalDate.now().toString().split("-");
+        calculateLastMonth(Integer.parseInt(splitedDate[1]), Integer.parseInt(splitedDate[0]));
+
+        return lastMonth.getWrapper(job).serialize();
+    }
+
+    public static int[] getLast30days(String job){
+        calculateLast30days();
+        return last30days.getWrapper(job).serialize();
+    }
+    
 }

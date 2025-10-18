@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +13,11 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 import deigojojlo.tracker.DataAnalist.SubType.MinionEntry;
+import deigojojlo.tracker.util.Backup;
 import deigojojlo.tracker.util.DateUtil;
 import net.fabricmc.loader.api.FabricLoader;
 
-public class Minion {
+public class Minion implements Statistics {
     private static MinionEntry dayMoney;
     private static List<MinionEntry> data ;
     private static int allTimeMoney = 0;
@@ -23,9 +25,9 @@ public class Minion {
     private static int lastMonth = 0;
     {
         Gson gson = new Gson();
-        String path = FabricLoader.getInstance().getGameDir().toString() + "/tracker/minion.json";
+        Path path = createFile("Minion.json");
 
-        try (FileReader reader = new FileReader(path)){
+        try (FileReader reader = new FileReader(path.toAbsolutePath().toString())){
             Type itemListType = new TypeToken<List<MinionEntry>>(){}.getType(); // the type of the list
             data = gson.fromJson(reader, itemListType ); // items
             
@@ -49,11 +51,14 @@ public class Minion {
     }
 
     public static void addMoney(int amount){
-        dayMoney.setCount(dayMoney.getCount() + amount);
+        if (dayMoney != null)
+            dayMoney.setCount(dayMoney.getCount() + amount);
     }
 
     public static int getMoney(){
-        return dayMoney.getCount();
+        if (dayMoney != null)
+            return dayMoney.getCount();
+        return 0;
     }
 
 
@@ -62,18 +67,20 @@ public class Minion {
     }
 
     public static int getLastMonth(){
+        String[] splitedDate = LocalDate.now().toString().split("-");
+        calculateLastMonth(Integer.parseInt(splitedDate[1]), Integer.parseInt(splitedDate[0]));
         return lastMonth;
     }
 
     public static int getLast30days(){
+        calculateLast30days();
         return last30days;
     }
-
     public static void save(){
         Gson gson = new Gson();
-        String path = FabricLoader.getInstance().getGameDir().toString() + "/tracker/minion.json";
-
-        try (FileWriter writer = new FileWriter(path)){
+        
+        Path path = Backup.backup("Minion.json");
+        try (FileWriter writer = new FileWriter(path.toAbsolutePath().toString())){
             writer.write(gson.toJson(data));
         } catch (IOException error){
             error.printStackTrace();
