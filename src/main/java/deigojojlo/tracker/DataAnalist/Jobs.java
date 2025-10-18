@@ -10,7 +10,9 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import deigojojlo.tracker.DataAnalist.SubType.IslandEntry;
 import deigojojlo.tracker.DataAnalist.SubType.JobEntry;
+import deigojojlo.tracker.util.DateUtil;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class Jobs {
@@ -18,6 +20,8 @@ public class Jobs {
     private static List<JobEntry> data;
     private static JobEntry dayJob;
     private static JobEntry allTimeJobs;
+    private static JobEntry last30days;
+    private static JobEntry lastMonth;
     {
         Gson gson = new Gson();
         String path = FabricLoader.getInstance().getGameDir().toString() + "/tracker/jobs.json";
@@ -62,6 +66,26 @@ public class Jobs {
             writer.write(gson.toJson(data));
         } catch (IOException error){
             error.printStackTrace();
+        }
+    }
+
+    public static void calculateLast30days(){
+        last30days = new JobEntry();
+        String[] today = LocalDate.now().toString().split("-");
+        int id = DateUtil.createIdentifier(Integer.parseInt(today[2]), Integer.parseInt(today[1]), Integer.parseInt(today[0]));
+        for (JobEntry entry : data){
+            String[] splitedDate = entry.getDate().split("-");
+            int entryId = DateUtil.createIdentifier(Integer.parseInt(splitedDate[2]), Integer.parseInt(splitedDate[1]), Integer.parseInt(splitedDate[0]));
+            if (id - entryId < 31 ) last30days.add(entry);
+        }
+    }
+
+    public static void calculateLastMonth(int month,int year){
+        lastMonth = new JobEntry();
+        for (JobEntry entry : data){
+            String[] splitedDate = entry.getDate().split("-");
+            if (Integer.parseInt(splitedDate[0]) == year && Integer.parseInt(splitedDate[1]) == month)
+                lastMonth.add(entry);
         }
     }
 

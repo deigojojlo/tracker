@@ -11,32 +11,33 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import deigojojlo.tracker.DataAnalist.SubType.InslandEntry;
+import deigojojlo.tracker.DataAnalist.SubType.IslandEntry;
+import deigojojlo.tracker.util.DateUtil;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class Island implements Statistics{
     private static int level = 0;
     private static Integer time = null;
-    private static InslandEntry dayLevel;
-    private static List<InslandEntry> data ;
+    private static IslandEntry dayLevel;
+    private static List<IslandEntry> data ;
     private static int allTimeLevel = 0;
-    private static int monthlyTimeLevel = 0;
-
+    private static int lastMonth = 0;
+    private static int last30days = 0;
     {
         Gson gson = new Gson();
         String path = FabricLoader.getInstance().getGameDir().toString() + "/tracker/island.json";
 
         try (FileReader reader = new FileReader(path)){
-            Type itemListType = new TypeToken<List<InslandEntry>>(){}.getType(); // the type of the list
+            Type itemListType = new TypeToken<List<IslandEntry>>(){}.getType(); // the type of the list
             data = gson.fromJson(reader, itemListType ); // items
             
-            InslandEntry lastDay =  data.getLast();
+            IslandEntry lastDay =  data.getLast();
             LocalDate date = LocalDate.now();
 
             if (lastDay.getDate().equals(date.toString())){
                 dayLevel = lastDay ;
             } else {
-                dayLevel = new InslandEntry(date.toString(),0);
+                dayLevel = new IslandEntry(date.toString(),0);
                 data.addLast(dayLevel);
             }
         } catch (IOException error){
@@ -48,7 +49,7 @@ public class Island implements Statistics{
         data.forEach(level -> {
             allTimeLevel += level.getCount();
             String[] splitDate = level.getDate().split("-");
-            if (Integer.parseInt(splitDate[1]) == date.getMonth().ordinal() && Integer.parseInt(splitDate[2]) == date.getYear()){ monthlyTimeLevel += level.getCount();}
+            if (Integer.parseInt(splitDate[1]) == date.getMonth().ordinal() && Integer.parseInt(splitDate[2]) == date.getYear()){ lastMonth += level.getCount();}
         });
     }
 
@@ -76,8 +77,31 @@ public class Island implements Statistics{
     }
 
     public static int getLastMonth(){
-        return monthlyTimeLevel;
+        return lastMonth;
     }
 
+    public static int getLast30days(){
+        return last30days;
+    }
+
+    public static void calculateLast30days(){
+        last30days = 0;
+        String[] today = LocalDate.now().toString().split("-");
+        int id = DateUtil.createIdentifier(Integer.parseInt(today[2]), Integer.parseInt(today[1]), Integer.parseInt(today[0]));
+        for (IslandEntry entry : data){
+            String[] splitedDate = entry.getDate().split("-");
+            int entryId = DateUtil.createIdentifier(Integer.parseInt(splitedDate[2]), Integer.parseInt(splitedDate[1]), Integer.parseInt(splitedDate[0]));
+            if (id - entryId < 31 ) last30days += entry.getCount();
+        }
+    }
+
+    public static void calculateLastMonth(int month,int year){
+        lastMonth = 0;
+        for (IslandEntry entry : data){
+            String[] splitedDate = entry.getDate().split("-");
+            if (Integer.parseInt(splitedDate[0]) == year && Integer.parseInt(splitedDate[1]) == month)
+                lastMonth += entry.getCount();
+        }
+    }
     
 }

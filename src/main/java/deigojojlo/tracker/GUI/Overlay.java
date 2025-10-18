@@ -46,14 +46,6 @@ public class Overlay {
         drawContext.getMatrices().scale(Config.SUBTITLE_SCALE, Config.SUBTITLE_SCALE, 1.0f);
         drawContext.drawText(mcCli.textRenderer, Text.literal("GLOBAL :"), titleX, y, 0xFFFFFF, true);
         y += 12;
-        drawContext.drawText(mcCli.textRenderer, Text.literal("Money all time : " + Minion.getAllTimeMoney() + "§f实"), titleX, y, 0xFFFFFF, true);
-        y += 12;
-        drawContext.drawText(mcCli.textRenderer, Text.literal("Level all time : " + Island.getAllTimeLevel() + " levels"), titleX, y, 0xFFFFFF, true);
-        y += 12;
-        drawContext.drawText(mcCli.textRenderer, Text.literal("Money of the month : " + Minion.getMonth() + "§f实"), titleX, y, 0xFFFFFF, true);
-        y += 12;
-        drawContext.drawText(mcCli.textRenderer, Text.literal("Level of the month : " + Island.getLastMonth() + " levels"), titleX, y, 0xFFFFFF, true);
-        y += 12;
         drawContext.drawText(mcCli.textRenderer, Text.literal("Money of the day : " + Minion.getMoney() + "§f实"), titleX, y, 0xFFFFFF, true);
         y += 12;
         drawContext.drawText(mcCli.textRenderer, Text.literal("Level of the day : " + Island.getLevel() + " levels"), titleX, y, 0xFFFFFF, true);

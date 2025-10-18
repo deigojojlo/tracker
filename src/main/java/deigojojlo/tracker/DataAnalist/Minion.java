@@ -12,13 +12,15 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 import deigojojlo.tracker.DataAnalist.SubType.MinionEntry;
+import deigojojlo.tracker.util.DateUtil;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class Minion {
     private static MinionEntry dayMoney;
     private static List<MinionEntry> data ;
     private static int allTimeMoney = 0;
-    private static int monthlyTimeMoney = 0;
+    private static int last30days = 0;
+    private static int lastMonth = 0;
     {
         Gson gson = new Gson();
         String path = FabricLoader.getInstance().getGameDir().toString() + "/tracker/minion.json";
@@ -41,11 +43,8 @@ public class Minion {
             error.printStackTrace();
         }
 
-        LocalDate date = LocalDate.now();
         data.forEach(level -> {
             allTimeMoney += level.getCount();
-            String[] splitDate = level.getDate().split("-");
-            if (Integer.parseInt(splitDate[1]) == date.getMonth().ordinal() && Integer.parseInt(splitDate[2]) == date.getYear()){ monthlyTimeMoney += level.getCount();}
         });
     }
 
@@ -62,8 +61,12 @@ public class Minion {
         return allTimeMoney;
     }
 
-    public static int getMonth(){
-        return monthlyTimeMoney;
+    public static int getLastMonth(){
+        return lastMonth;
+    }
+
+    public static int getLast30days(){
+        return last30days;
     }
 
     public static void save(){
@@ -74,6 +77,26 @@ public class Minion {
             writer.write(gson.toJson(data));
         } catch (IOException error){
             error.printStackTrace();
+        }
+    }
+
+    public static void calculateLast30days(){
+        last30days = 0;
+        String[] today = LocalDate.now().toString().split("-");
+        int id = DateUtil.createIdentifier(Integer.parseInt(today[2]), Integer.parseInt(today[1]), Integer.parseInt(today[0]));
+        for (MinionEntry entry : data){
+            String[] splitedDate = entry.getDate().split("-");
+            int entryId = DateUtil.createIdentifier(Integer.parseInt(splitedDate[2]), Integer.parseInt(splitedDate[1]), Integer.parseInt(splitedDate[0]));
+            if (id - entryId < 31 ) last30days += entry.getCount();
+        }
+    }
+
+    public static void calculateLastMonth(int month,int year){
+        lastMonth = 0;
+        for (MinionEntry entry : data){
+            String[] splitedDate = entry.getDate().split("-");
+            if (Integer.parseInt(splitedDate[0]) == year && Integer.parseInt(splitedDate[1]) == month)
+                lastMonth += entry.getCount();
         }
     }
 }

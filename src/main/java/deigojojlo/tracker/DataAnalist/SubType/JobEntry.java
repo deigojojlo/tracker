@@ -2,7 +2,7 @@ package deigojojlo.tracker.DataAnalist.SubType;
 
 import java.time.LocalDate;
 
-public class JobEntry {
+public class JobEntry implements JsonEntry {
     private String date;
     private JobWrapper farmer;
     private JobWrapper fisher;
@@ -33,13 +33,15 @@ public class JobEntry {
         return this.date;
     }
     
-    public void update(JobEntry copy){
-        this.date = copy.date;
-        this.farmer.add(copy.farmer);
-        this.explorer.add(copy.explorer);
-        this.miner.add(copy.miner);
-        this.lumberjack.add(copy.lumberjack);
-        this.fisher.add(copy.fisher);
+    public void add(JsonEntry jsonEntry){
+        if (jsonEntry instanceof JobEntry copy){
+            this.date = copy.date;
+            this.farmer.add(copy.farmer);
+            this.explorer.add(copy.explorer);
+            this.miner.add(copy.miner);
+            this.lumberjack.add(copy.lumberjack);
+            this.fisher.add(copy.fisher);
+        }
     }
     public void copy(JobEntry copy){
         this.date = copy.date;

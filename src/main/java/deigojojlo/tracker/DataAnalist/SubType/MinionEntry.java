@@ -1,6 +1,6 @@
 package deigojojlo.tracker.DataAnalist.SubType;
 
-public class MinionEntry {
+public class MinionEntry implements JsonEntry{
     String date;
     int count;
 
@@ -22,5 +22,10 @@ public class MinionEntry {
 
     public void setCount(int count){
         this.count = count;
+    }
+
+    public void add(JsonEntry e){
+        if (e instanceof MinionEntry minion )
+            this.count += minion.count;
     }
 }

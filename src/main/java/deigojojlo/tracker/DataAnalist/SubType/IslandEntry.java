@@ -1,10 +1,10 @@
 package deigojojlo.tracker.DataAnalist.SubType;
 
-public class InslandEntry {
+public class IslandEntry {
         String date;
         int count;
 
-        public InslandEntry(String date, int count){
+        public IslandEntry(String date, int count){
             this.date = date;
             this.count = count;
         }
@@ -22,5 +22,10 @@ public class InslandEntry {
 
         protected void setCount(int count){
             this.count = count;
+        }
+
+        public void add(JsonEntry e){
+            if (e instanceof IslandEntry entry)
+                this.count += entry.count;
         }
     }
