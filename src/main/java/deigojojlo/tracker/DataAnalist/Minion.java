@@ -23,8 +23,6 @@ public class Minion implements Statistics {
     private static MinionEntry allTimeMoney = new MinionEntry(null,0.0,0);
     private static MinionEntry last30days = new MinionEntry(null,0.0,0);
     private static MinionEntry lastMonth = new MinionEntry(null,0.0,0);
-    private static Long time = null;
-
     public static void load(){
         Gson gson = new Gson();
         Path path = Backup.createFile("Minion.json");
@@ -55,10 +53,11 @@ public class Minion implements Statistics {
     }
 
     public static void addMoney(double amount){
-        if (time == null)
-            time = new Date().getTime();
+        
         if (dayMoney != null)
             dayMoney.setCount(dayMoney.getCount() + amount);
+            if (dayMoney.getTime() == null)
+                dayMoney.setTime(new Date().getTime());
         if (allTimeMoney != null)
             allTimeMoney.setCount(allTimeMoney.getCount() + amount);
     }
@@ -77,9 +76,9 @@ public class Minion implements Statistics {
     }
 
     public static String getTime(){
-        if (time == null) return "0s";
+        if (dayMoney == null || dayMoney.getTime() == null) return "00:00:00";
         long t = new Date().getTime();
-        long millis = t - time;
+        long millis = Math.abs(t - dayMoney.getItems());
         long totalSeconds = millis / 1000;
         long seconds = totalSeconds % 60;
         long totalMinutes = totalSeconds / 60;

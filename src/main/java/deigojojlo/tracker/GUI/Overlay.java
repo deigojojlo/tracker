@@ -28,7 +28,7 @@ public class Overlay {
         x = 10;
         drawContext.getMatrices().push();
         drawContext.getMatrices().scale(Config.SUBTITLE_SCALE, Config.SUBTITLE_SCALE, 1.0f);
-        drawContext.drawText(mcCli.textRenderer, Text.literal("Money [" +Minion.getTime() + "] : " + Minion.getMoney() + "§f实"), x, y, 0xFFFFFF, true);
+        drawContext.drawText(mcCli.textRenderer, Text.literal("Money [" +Minion.getTime() + "] : " + Minion.getFormatMoney() + "§f实"), x, y, 0xFFFFFF, true);
         y += 12;
         drawContext.drawText(mcCli.textRenderer, Text.literal("Level [" + Island.getTime() + "] : " + Island.getFormatLevel() + " levels"), x, y, 0xFFFFFF, true);
         y += 12;

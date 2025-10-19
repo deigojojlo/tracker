@@ -4,11 +4,13 @@ public class MinionEntry implements JsonEntry{
     private String date;
     private double count;
     private int items;
+    private Long time;
 
     public MinionEntry(String date, double count, int items){
         this.date = date;
         this.count = count;
         this.items = items;
+        this.time = null;
     }
     public String getDate(){
         return this.date;
@@ -24,6 +26,14 @@ public class MinionEntry implements JsonEntry{
 
     public void setCount(double count){
         this.count = count;
+    }
+
+    public void setTime(Long time){
+        this.time = time;
+    }
+
+    public Long getTime(){
+        return this.time;
     }
 
     public void add(JsonEntry e){
@@ -43,27 +53,34 @@ public class MinionEntry implements JsonEntry{
 
 
     public String getFormatMoney(){
-        if (this.getCount() > 1_000_000_000){
-            return (this.getCount() / 1_000_000_000 ) + "B";
-        } else if (this.getCount() > 1_000_000){
-            return (this.getCount() / 1_000_000 ) + "M";
-        } else if (this.getCount() > 1_000){
-            return (this.getCount() / 1_000) + "K";
+        double count = this.getCount();
+        if (count > 1_000_000_000L) {
+            double value = (double) count / 1_000_000_000.0;
+            return String.format("%.2f", value) + "B";
+        } else if (count > 1_000_000L) {
+            double value = (double) count / 1_000_000.0;
+            return String.format("%.2f", value) + "M";
+        } else if (count > 1_000L) {
+            double value = (double) count / 1_000.0;
+            return String.format("%.2f", value) + "K";
         } else {
-            return this.getCount() + "";
+            return String.valueOf(count);
         }
     }
 
     public String getFormatItems(){
-        if (this.getItems() > 1_000_000_000){
-            return (this.getItems() / 1_000_000_000 ) + "B";
-        } else if (this.getItems() > 1_000_000){
-            return (this.getItems() / 1_000_000 ) + "M";
-        } else if (this.getItems() > 1_000){
-            return (this.getItems() / 1_000) + "K";
+        double count = this.getItems();
+        if (count > 1_000_000_000L) {
+            double value = (double) count / 1_000_000_000.0;
+            return String.format("%.2f", value) + "B";
+        } else if (count > 1_000_000L) {
+            double value = (double) count / 1_000_000.0;
+            return String.format("%.2f", value) + "M";
+        } else if (count > 1_000L) {
+            double value = (double) count / 1_000.0;
+            return String.format("%.2f", value) + "K";
         } else {
-            return this.getItems() + "";
+            return String.valueOf(count);
         }
     }
-    
 }

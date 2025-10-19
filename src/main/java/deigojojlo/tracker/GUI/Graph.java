@@ -15,6 +15,8 @@ public class Graph {
 
         int startX = leftPadd * 2;
         int startY = bottomPadd * 2;
+        int height = sh - 4 * bottomPadd;
+        int width = sw - 3 * leftPadd;
         // draw Axis
         context.drawVerticalLine(sx + startX, sy + sh - startY , sy + bottomPadd, 0xFFFFFF);
         context.drawHorizontalLine(sx + startX, sy + sh - startY, sx + startX + sw - leftPadd, 0xFFFFFF);
@@ -22,23 +24,21 @@ public class Graph {
         // draw lines
 
         // draw xName yName title
-        context.drawText(renderer, Text.translatable(title), startX, sy + bottomPadd, 0xFFFFFF, false);
-        context.drawText(renderer, Text.translatable(xName), startX, sy + sh - 1, 0xFFFFFF, false);
-        context.drawText(renderer, Text.translatable(yName), startX - renderer.getWidth(Text.translatable(yName))/2, sy + bottomPadd, 0xFFFFFF, false);
+        context.drawText(renderer, Text.translatable(title), sx + sw / 2 - renderer.getWidth(Text.translatable(title)) / 2, sy + 1, 0xFFFFFF, false);
+        context.drawText(renderer, Text.translatable(xName), sx + startX + width / 2 - renderer.getWidth(Text.translatable(xName)) / 2, sy + sh - 1, 0xFFFFFF, false);
+        context.drawText(renderer, Text.translatable(yName), sx + startX - renderer.getWidth(Text.translatable(yName))/2, sy + bottomPadd, 0xFFFFFF, false);
 
         // draw division
         Double maxX = Collections.max(xDivision);
         Double maxY = Collections.max(yDivision);
         List<Double> xNormal = normalize(xDivision,maxX);
         List<Double> yNormal = normalize(yDivision,maxY);
-        int height = sh - 3 * bottomPadd;
-        int width = sw - 3 * leftPadd;
 
         for (int i = 0 ; i < xNormal.size() ; i++){
             context.drawText(renderer, Text.of(xDivision.get(i) + ""), sx + startX + (int)(width * xNormal.get(i) - renderer.getWidth(xDivision + "") / 2), sy + sh - bottomPadd, 0xFFFFFF, false);
         }
         for (int i = 0 ; i < yNormal.size() ; i++){
-            context.drawText(renderer, Text.of(yDivision.get(i) + ""), sx + leftPadd, sy + bottomPadd + (int)(height * yNormal.get(i)), 0xFFFFFF, false);
+            context.drawText(renderer, Text.of(yDivision.get(i) + ""), sx + leftPadd, sy + bottomPadd + height - (int)(height * yNormal.get(i)), 0xFFFFFF, false);
         }
 
         // draw Point

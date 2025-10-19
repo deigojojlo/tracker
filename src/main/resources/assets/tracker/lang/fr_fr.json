@@ -1,0 +1,8 @@
+{
+    "gui.tracker.log.niveaux" : "Niveaux",
+    "gui.tracker.log.argent" : "Argent",
+    "gui.tracker.log.metier" : "Métier",
+    "gui.tracker.log.last7days" : "les 7 derniers jours",
+    "gui.tracker.log.jour" : "jours",
+    "gui.tracker.log.level" : "niveaux"
+}

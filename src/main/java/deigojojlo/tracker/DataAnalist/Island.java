@@ -20,7 +20,6 @@ import deigojojlo.tracker.util.DateUtil;
 import net.minecraft.util.Pair;
 
 public class Island implements Statistics{
-    private static Long time = null;
     private static IslandEntry dayLevel;
     private static List<IslandEntry> data ;
     private static int allTimeLevel = 0;
@@ -60,10 +59,11 @@ public class Island implements Statistics{
     }
 
     public static void addLevel(int amount){
-        if (time == null)
-            time = new Date().getTime();
+        
         if (dayLevel != null)
             dayLevel.addLevel(amount);
+            if (dayLevel.getTime() == null)
+                dayLevel.setTime(new Date().getTime());
         allTimeLevel += amount;
     }
 
@@ -78,9 +78,9 @@ public class Island implements Statistics{
     }
 
     public static String getTime(){
-        if (time == null) return "0s";
+        if (dayLevel == null || dayLevel.getTime() == null) return "00:00:00";
         long t = new Date().getTime();
-        long millis = t - time;
+        long millis = t - dayLevel.getTime();
         long totalSeconds = millis / 1000;
         long seconds = totalSeconds % 60;
         long totalMinutes = totalSeconds / 60;

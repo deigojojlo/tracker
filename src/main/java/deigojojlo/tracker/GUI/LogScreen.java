@@ -17,8 +17,8 @@ import net.minecraft.util.math.MathHelper;
 public class LogScreen extends Screen {
     
     // ... (Variables de classe inchangées) ...
-    private static final float WIDTH_RATIO = 0.5f; 
-    private static final float HEIGHT_RATIO = 0.5f;
+    private static final float WIDTH_RATIO = 0.75f;
+    private static final float HEIGHT_RATIO = 0.75f;
     private static final int MIN_WIDTH = 250;
     private int currentTab = 0;
     private int windowWidth;
@@ -43,7 +43,7 @@ public class LogScreen extends Screen {
         int tabCount = 3;
         int tabTotalWidth = windowWidth - 10;
         int tabWidth = tabTotalWidth / tabCount;
-        int tabY = y + 5; 
+        int tabY = y + 5;
 
         this.clearChildren();
 
@@ -65,7 +65,7 @@ public class LogScreen extends Screen {
         this.renderBackground(context, mouseX, mouseY, delta);
 
         // Dessiner le cadre de la fenêtre (Noir semi-transparent)
-        context.fill(x, y, x + windowWidth, y + windowHeight, 0xD0000000); 
+        context.fill(x, y, x + windowWidth, y + windowHeight, 0xD0000000);
 
         // Dessiner la bordure
         context.drawBorder(x, y, windowWidth, windowHeight, 0xFFFFFFFF);
@@ -77,15 +77,15 @@ public class LogScreen extends Screen {
         // affichage de 3 bouttons
         int tabY = y + 5;
         int tabWidth = (windowWidth - 10) / 3;
-        context.fill(x + 5, tabY , tabWidth -1 , 20, 0x9999FF99);
-        context.drawBorder(x + 5, tabY , tabWidth -1 , 20, 0x5555FF99);
-        context.drawText(textRenderer, Text.translatable("gui.tracker.log.metier"), x + 5, tabY , 0x000000, false);
-        context.fill(x + 5 + tabWidth, tabY ,tabWidth -1 , 20,0x9999FF99 );
-        context.drawBorder(x + 5 + tabWidth, tabY , tabWidth -1 , 20, 0x5555FF99);
-        context.drawText(textRenderer, Text.translatable("gui.tracker.log.argent"),x + 5 + tabWidth, tabY , 0x000000, false);
-        context.fill(x + 5 + 2 * tabWidth, tabY,  tabWidth -1 , 20, 0x9999FF99);
-        context.drawBorder(x + 5 + 2 * tabWidth, tabY, tabWidth -1 , 20, 0x5555FF99);
-        context.drawText(textRenderer, Text.translatable("gui.tracker.log.niveaux"),x + 5 + 2 * tabWidth, tabY, 0x000000, false);
+        context.fill(x + 5, tabY , x + 5 + tabWidth -1 , tabY + 20, 0x999393FB);
+        context.drawBorder(x + 5, tabY , tabWidth -1 , 20, 0x997979f7);
+        context.drawText(textRenderer, Text.translatable("gui.tracker.log.metier"), x + 5 + tabWidth / 2 - textRenderer.getWidth(Text.translatable("gui.tracker.log.metier"))/2, tabY + 6 , 0xFF000000, false);
+        context.fill(x + 5 + tabWidth, tabY ,x + 5 + 2 * tabWidth -1 , tabY + 20,0x999393FB );
+        context.drawBorder(x + 5 + tabWidth, tabY , tabWidth -1 , 20, 0x997979f7);
+        context.drawText(textRenderer, Text.translatable("gui.tracker.log.argent"),x + 5 + tabWidth + 1 + tabWidth / 2 - textRenderer.getWidth(Text.translatable("gui.tracker.log.argent"))/2, tabY + 6, 0xFF000000, false);
+        context.fill(x + 5 + 2 * tabWidth, tabY,  x + 5 +3 * tabWidth -1 , tabY + 20, 0x999393FB);
+        context.drawBorder(x + 5 + 2 * tabWidth, tabY, tabWidth -1 , 20, 0x997979f7);
+        context.drawText(textRenderer, Text.translatable("gui.tracker.log.niveaux"),x + 5 + 2 * tabWidth + tabWidth / 2 - textRenderer.getWidth(Text.translatable("gui.tracker.log.niveaux"))/2, tabY + 6, 0xFF000000, false);
         switch (currentTab) {
             case 0:
                 drawContents(context, "Métier", contentY);
@@ -215,9 +215,9 @@ public class LogScreen extends Screen {
         String[] values = {"error", "error", "error", "error"};
 
         switch (category) {
-            case "Argent : Argent" : values = new String[] {Minion.getMoney() + "", Minion.getLast30days().getCount() + "", Minion.getLastMonth().getCount() + "", Minion.getAllTimeMoney().getCount() + ""};break;
-            case "Argent : Items" : values = new String[] {Minion.getItems() + "", Minion.getLast30days().getItems() + "", Minion.getLastMonth().getItems() + "", Minion.getAllTimeMoney().getItems() + ""};break;
-            case "Niveaux" : values = new String[] {Island.getLevel() + "", Island.getLast30days() + "", Island.getLastMonth() + "", Island.getAllTimeLevel() + ""};break;
+            case "Argent : Argent" : values = new String[] {Minion.getFormatMoney() + "", Minion.getLast30days().getFormatMoney() + "", Minion.getLastMonth().getFormatMoney() + "", Minion.getAllTimeMoney().getFormatMoney() + ""};break;
+            case "Argent : Items" : values = new String[] {Minion.getFormatItems() + "", Minion.getLast30days().getFormatItems() + "", Minion.getLastMonth().getFormatItems() + "", Minion.getAllTimeMoney().getFormatItems() + ""};break;
+            case "Niveaux" : values = new String[] {Island.getFormatLevel() + "", Island.getFormatLast30days() + "", Island.getFormatLastMonth() + "", Island.getFormatAllTime() + ""};break;
         }
 
 

@@ -3,10 +3,12 @@ package deigojojlo.tracker.DataAnalist.SubType;
 public class IslandEntry {
         String date;
         int count;
+        Long time;
 
         public IslandEntry(String date, int count){
             this.date = date;
             this.count = count;
+            this.time = null;
         }
         public String getDate(){
             return this.date;
@@ -16,6 +18,13 @@ public class IslandEntry {
             return this.count;
         }
 
+        public Long getTime(){
+            return this.time;
+        }
+
+        public void setTime(Long time){
+            this.time = time;
+        }
         public void addLevel(int amount){
             this.count += amount;
         }
@@ -29,13 +38,19 @@ public class IslandEntry {
         }
 
         public String getFormatLevel(){
-            if (this.count >= 1_000_000_000){
-                return (this.count / 1_000_000_000.0) + "B";
-            } else if (this.count >= 1_000_000){
-                return (this.count / 1_000_000) + "M";
-            } else if (this.count >= 1_000){
-                return (this.count >= 1_000) + "K";
-            } return this.count + "";
+            double count = this.count;
+            if (count > 1_000_000_000L) {
+                double value = (double) count / 1_000_000_000.0;
+                return String.format("%.2f", value) + "B";
+            } else if (count > 1_000_000L) {
+                double value = (double) count / 1_000_000.0;
+                return String.format("%.2f", value) + "M";
+            } else if (count > 1_000L) {
+                double value = (double) count / 1_000.0;
+                return String.format("%.2f", value) + "K";
+            } else {
+                return String.valueOf(count);
+            }
         }
         
         public void add(JsonEntry e){
